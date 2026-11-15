@@ -9,6 +9,7 @@ import {
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Suspense } from 'react'
 import './globals.css'
+import Container from '@/components/global/Container'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -52,7 +53,7 @@ export default function RootLayout({
               </Show>
             </Suspense>
           </header>
-          {children}
+          <Container className="py-20 flex-1">{children}</Container>
         </ClerkProvider>
       </body>
     </html>
