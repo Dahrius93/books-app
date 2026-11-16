@@ -40,7 +40,7 @@ export function BookSearch() {
   const isLoading = canSearch && loading
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-2xl">
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -54,7 +54,7 @@ export function BookSearch() {
         <p className="text-sm text-muted-foreground">Nessun risultato</p>
       )}
 
-      <ul className="space-y-2">
+      <ul className="space-y-2 max-w-2xl">
         {visibleResults.map((book) => (
           <li key={book.id} className="flex items-center gap-3">
             {book.coverUrl ? (
@@ -73,6 +73,9 @@ export function BookSearch() {
                 {book.year && ` · ${book.year}`}
               </p>
             </div>
+            <button className="bg-primary text-white rounded-2xl py-1 px-2 hover:shadow-lg cursor-pointer">
+              da leggere
+            </button>
           </li>
         ))}
       </ul>

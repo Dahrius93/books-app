@@ -9,7 +9,7 @@ export async function GET(req: Request) {
 
   const url = new URL('https://openlibrary.org/search.json')
   url.searchParams.set('q', q)
-  url.searchParams.set('limit', '10')
+  url.searchParams.set('limit', '100')
   url.searchParams.set(
     'fields',
     'key,title,author_name,cover_i,first_publish_year',

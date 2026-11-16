@@ -1,10 +1,8 @@
-import { BookSearch } from '@/components/BookSearch'
-
 const Home = () => {
   return (
-    <>
-      <BookSearch />
-    </>
+    <div>
+      <p>app per gestire libri</p>
+    </div>
   )
 }
 
