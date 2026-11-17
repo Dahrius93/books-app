@@ -14,12 +14,16 @@ datasource db {
 
 model Book {
   id        Int      @id @default(autoincrement())
+  workId    String
   userId    String   // id utente Clerk
   title     String
   author    String
-  status    String   @default("TO_READ")
+  read      Boolean @default(false)
   rating    Int?
+  coverUrl  String?
+  year      Int?
   createdAt DateTime @default(now())
 
-  @@index([userId])
+  // @@index([userId])
+  @@unique([userId, workId])
 }

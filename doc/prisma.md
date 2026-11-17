@@ -14,3 +14,5 @@ prisma
 - npx prisma migrate dev --name init
 - npx prisma generate
 - npx prisma studio
+
+- npx prisma migrate reset (svuota le tabelle)
