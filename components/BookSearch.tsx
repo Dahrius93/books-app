@@ -60,60 +60,65 @@ export function BookSearch({ savedIds }: { savedIds: string[] }) {
   const isLoading = canSearch && loading // in caricamento
 
   return (
-    <div className="space-y-4 w-2xl">
-      {/* input ricerca */}
-      <input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Cerca un libro..."
-        className="w-full rounded-md border px-3 py-2"
-      />
+    <>
+      <div className="flex justify-center mb-4">
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Cerca un libro..."
+          className="w-full rounded-md border p-2"
+        />
+      </div>
 
-      {/* fetch risultati in corso */}
-      {isLoading && <p className="text-sm text-muted-foreground">Cerco...</p>}
+      <div className="space-y-4 ">
+        {/* input ricerca */}
 
-      {/* nessun risultato trovato dalla ricerca */}
-      {canSearch && !isLoading && visibleResults.length === 0 && (
-        <p className="text-sm text-muted-foreground">Nessun risultato</p>
-      )}
+        {/* fetch risultati in corso */}
+        {isLoading && <p className="text-sm text-muted-foreground">Cerco...</p>}
 
-      {/* map dei risultati ottenuti */}
-      <ul className="space-y-2 max-w-2xl">
-        {visibleResults.map((book) => (
-          <li key={book.id} className="flex items-center gap-3">
-            {/* caso in cui ho l'immagine allora la mostro altrimenti riquadro scuro */}
-            {book.coverUrl ? (
-              <img
-                src={book.coverUrl}
-                alt=""
-                className="h-16 w-11 rounded object-cover"
-              />
-            ) : (
-              <div className="h-16 w-11 rounded bg-muted" />
-            )}
-            <div>
-              <p className="font-medium">{book.title}</p>
-              <p className="text-sm text-muted-foreground">
-                {book.author}
-                {book.year && ` · ${book.year}`}
-              </p>
-            </div>
-            {/* pulsante aggiungi in libreria */}
-            {saved.has(book.id) ? (
-              <button className="bg-muted text-black rounded-2xl py-1 px-2 hover:shadow-lg">
-                Aggiunto
-              </button>
-            ) : (
-              <button
-                className="bg-primary text-white rounded-2xl py-1 px-2 hover:shadow-lg cursor-pointer"
-                onClick={() => addToLibrary({ book })}
-              >
-                Aggiungi
-              </button>
-            )}
-          </li>
-        ))}
-      </ul>
-    </div>
+        {/* nessun risultato trovato dalla ricerca */}
+        {canSearch && !isLoading && visibleResults.length === 0 && (
+          <p className="text-sm text-muted-foreground">Nessun risultato</p>
+        )}
+
+        {/* map dei risultati ottenuti */}
+        <ul className="space-y-2 max-w-lg">
+          {visibleResults.map((book) => (
+            <li key={book.id} className="flex items-center gap-3">
+              {/* caso in cui ho l'immagine allora la mostro altrimenti riquadro scuro */}
+              {book.coverUrl ? (
+                <img
+                  src={book.coverUrl}
+                  alt=""
+                  className="h-16 w-11 rounded object-cover"
+                />
+              ) : (
+                <div className="h-16 w-11 rounded bg-muted" />
+              )}
+              <div>
+                <p className="font-medium">{book.title}</p>
+                <p className="text-sm text-muted-foreground">
+                  {book.author}
+                  {book.year && ` · ${book.year}`}
+                </p>
+              </div>
+              {/* pulsante aggiungi in libreria */}
+              {saved.has(book.id) ? (
+                <button className="bg-muted text-black rounded-2xl py-1 px-2 hover:shadow-lg">
+                  Aggiunto
+                </button>
+              ) : (
+                <button
+                  className="bg-primary text-white rounded-2xl py-1 px-2 hover:shadow-lg cursor-pointer"
+                  onClick={() => addToLibrary({ book })}
+                >
+                  Aggiungi
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   )
 }
