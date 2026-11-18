@@ -7,6 +7,17 @@ import db from './db'
 import { Book } from '@/app/generated/prisma/client'
 import type { BookResult } from '@/lib/openLibrary'
 
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
 // check for actual user else error
 const getAuthUser = async () => {
   const user = await currentUser()
@@ -51,6 +62,17 @@ export const fetchMyLibrary = async () => {
   })
 }
 
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
 // fetch di un singolo libro dalla libreria
 // utile per mostrarlo su una pagina dedicata
 export const fetchBook = async ({ id }: { id: number }) => {
@@ -63,6 +85,17 @@ export const fetchBook = async ({ id }: { id: number }) => {
   })
 }
 
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
 // fetch dei libri già letti nella libreria
 export const fetchReadedBooks = async () => {
   const userId = await getAuthUserId()
@@ -73,6 +106,17 @@ export const fetchReadedBooks = async () => {
     },
   })
 }
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 
 // fetch dei libri nella libreria ancora da leggere
 export const fetchNotReadedBooks = async () => {
@@ -85,9 +129,20 @@ export const fetchNotReadedBooks = async () => {
   })
 }
 
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
 export const addToLibrary = async ({ book }: { book: BookResult }) => {
-  const userId = await getAuthUserId()
   try {
+    const userId = await getAuthUserId()
     await db.book.create({
       data: {
         workId: book.id,
@@ -98,11 +153,23 @@ export const addToLibrary = async ({ book }: { book: BookResult }) => {
         year: book.year,
       },
     })
+    revalidatePath('/')
     return { message: 'Aggiunto in libreria' }
   } catch (error) {
-    renderError(error)
+    return renderError(error)
   }
 }
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 
 // aggiunta di una review su un libro
 export const createReviewAction = async ({
@@ -134,6 +201,17 @@ export const createReviewAction = async ({
   }
 }
 
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
 // aggiorno un libro della libreria come già letto
 export const addToReadedBooksAction = async ({ id }: { id: number }) => {
   try {
@@ -153,6 +231,17 @@ export const addToReadedBooksAction = async ({ id }: { id: number }) => {
     return renderError(error)
   }
 }
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 
 // cancello un libro dalla libreria
 export const deleteBookAction = async ({ id }: { id: number }) => {

@@ -1,20 +1,24 @@
 'use client'
 import { useEffect, useState } from 'react'
 import type { BookResult } from '@/lib/openLibrary'
+import { addToLibrary } from '@/utils/actions'
 
-export function BookSearch() {
-  const [query, setQuery] = useState('')
-  const [results, setResults] = useState<BookResult[]>([])
-  const [loading, setLoading] = useState(false)
+export function BookSearch({ savedIds }: { savedIds: string[] }) {
+  const [query, setQuery] = useState('') // stato input
+  const [results, setResults] = useState<BookResult[]>([]) // stato risultati da fetch
+  const [loading, setLoading] = useState(false) // stato in caricamento durante fetch
 
-  // Valori derivati: calcolati a ogni render, non salvati nello stato
-  const q = query.trim()
-  const canSearch = q.length >= 2
+  const q = query.trim() // tolgo spazi bianchi dall'input
+  const canSearch = q.length >= 2 // permesso per cercare
+  const saved = new Set(savedIds) // id libri in libreria
 
+  // fetch della ricerca
   useEffect(() => {
     if (!canSearch) return
 
     const controller = new AbortController()
+
+    // avvio il fetch quando smetto di scrivere
     const timer = setTimeout(async () => {
       setLoading(true)
       try {
@@ -36,11 +40,12 @@ export function BookSearch() {
     }
   }, [q, canSearch])
 
-  const visibleResults = canSearch ? results : []
-  const isLoading = canSearch && loading
+  const visibleResults = canSearch ? results : [] // risultato ricerca
+  const isLoading = canSearch && loading // in caricamento
 
   return (
     <div className="space-y-4 w-2xl">
+      {/* input ricerca */}
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -48,15 +53,19 @@ export function BookSearch() {
         className="w-full rounded-md border px-3 py-2"
       />
 
+      {/* fetch risultati */}
       {isLoading && <p className="text-sm text-muted-foreground">Cerco...</p>}
 
+      {/* nessun risultato trovato dalla ricerca */}
       {canSearch && !isLoading && visibleResults.length === 0 && (
         <p className="text-sm text-muted-foreground">Nessun risultato</p>
       )}
 
+      {/* map dei risultati */}
       <ul className="space-y-2 max-w-2xl">
         {visibleResults.map((book) => (
           <li key={book.id} className="flex items-center gap-3">
+            {/* caso in cui ho l'immagine allora la mostro altrimenti riquadro scuro */}
             {book.coverUrl ? (
               <img
                 src={book.coverUrl}
@@ -73,9 +82,19 @@ export function BookSearch() {
                 {book.year && ` · ${book.year}`}
               </p>
             </div>
-            <button className="bg-primary text-white rounded-2xl py-1 px-2 hover:shadow-lg cursor-pointer">
-              da leggere
-            </button>
+            {/* pulsante aggiungi in libreria */}
+            {saved.has(book.id) ? (
+              <button className="bg-muted text-black rounded-2xl py-1 px-2 hover:shadow-lg">
+                Aggiunto
+              </button>
+            ) : (
+              <button
+                className="bg-primary text-white rounded-2xl py-1 px-2 hover:shadow-lg cursor-pointer"
+                onClick={() => addToLibrary({ book })}
+              >
+                Aggiungi
+              </button>
+            )}
           </li>
         ))}
       </ul>
