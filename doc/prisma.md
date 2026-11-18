@@ -7,7 +7,6 @@ npx prisma init --datasource-provider postgresql
 ```
 
 prisma init crea la cartella prisma/ con schema.prisma e il file prisma.config.ts. Poi:
-prisma
 
 - Metti in .env la DATABASE_URL di Neon
 - Scrivi il model Book in schema.prisma
@@ -16,3 +15,11 @@ prisma
 - npx prisma studio
 
 - npx prisma migrate reset (svuota le tabelle)
+
+---
+
+aggiornare package.json con questa stringa sotto "scripts"
+
+- "postinstall": "prisma generate"
+
+questo fa si che l'app prisma venga generata
