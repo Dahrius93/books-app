@@ -3,34 +3,50 @@ import { useEffect, useState } from 'react'
 import type { BookResult } from '@/lib/openLibrary'
 import { addToLibrary } from '@/utils/actions'
 
+/**!SECTION
+ *
+ *
+ * Componente che tramite un campo di recerca chiama API OpenLibrary e cerca
+ * il libro corrispondente alla ricerca
+ *
+ * riceve workId dei libri in libreria per fare un rendering condizionale
+ * del pulsante "aggiungi" in libreria
+ *
+ *
+ *
+ *
+ */
 export function BookSearch({ savedIds }: { savedIds: string[] }) {
-  const [query, setQuery] = useState('') // stato input
+  const [query, setQuery] = useState('') // stato campo input
   const [results, setResults] = useState<BookResult[]>([]) // stato risultati da fetch
   const [loading, setLoading] = useState(false) // stato in caricamento durante fetch
 
-  const q = query.trim() // tolgo spazi bianchi dall'input
-  const canSearch = q.length >= 2 // permesso per cercare
+  const q = query.trim() // tolgo spazi bianchi all'inzio dall'input
+  const canSearch = q.length >= 2 // ricerca consentita se input > di 2 caratteri
   const saved = new Set(savedIds) // id libri in libreria
 
-  // fetch della ricerca
+  // fetch dei libri
   useEffect(() => {
     if (!canSearch) return
 
+    // mi permette di cancellare la richiesta precedente se aspetto troppo e
+    // poi continuo a scrivere. Risolve la raceCondition
     const controller = new AbortController()
+    const signal = controller.signal
 
     // avvio il fetch quando smetto di scrivere
     const timer = setTimeout(async () => {
       setLoading(true)
       try {
         const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`, {
-          signal: controller.signal,
+          signal: signal,
         })
         if (!res.ok) throw new Error('Errore nella ricerca')
         setResults(await res.json())
       } catch (err) {
         if ((err as Error).name !== 'AbortError') setResults([])
       } finally {
-        if (!controller.signal.aborted) setLoading(false)
+        if (!signal.aborted) setLoading(false)
       }
     }, 300)
 
@@ -53,7 +69,7 @@ export function BookSearch({ savedIds }: { savedIds: string[] }) {
         className="w-full rounded-md border px-3 py-2"
       />
 
-      {/* fetch risultati */}
+      {/* fetch risultati in corso */}
       {isLoading && <p className="text-sm text-muted-foreground">Cerco...</p>}
 
       {/* nessun risultato trovato dalla ricerca */}
@@ -61,7 +77,7 @@ export function BookSearch({ savedIds }: { savedIds: string[] }) {
         <p className="text-sm text-muted-foreground">Nessun risultato</p>
       )}
 
-      {/* map dei risultati */}
+      {/* map dei risultati ottenuti */}
       <ul className="space-y-2 max-w-2xl">
         {visibleResults.map((book) => (
           <li key={book.id} className="flex items-center gap-3">
