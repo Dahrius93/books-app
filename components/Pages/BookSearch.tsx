@@ -66,7 +66,7 @@ export function BookSearch({ savedIds }: { savedIds: string[] }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Cerca un libro..."
-          className="w-full rounded-md border p-2"
+          className="w-full max-w-sm rounded-md border p-2"
         />
       </div>
 

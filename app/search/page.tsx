@@ -1,4 +1,4 @@
-import { BookSearch } from '@/components/BookSearch'
+import { BookSearch } from '@/components/Pages/BookSearch'
 import { fetchMyLibrary } from '@/utils/actions'
 
 const Search = async () => {
