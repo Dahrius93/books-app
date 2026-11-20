@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { bookResultSchema, reviewSchema } from '@/lib/schemas'
 import { mapDocs } from './openLibrary'
-import z from 'zod'
 
 // un libro valido di base, da modificare nei singoli test
 const validBook = {
@@ -88,7 +87,7 @@ describe('bookResultSchema', () => {
     const input = [dataInput]
     const mapDocResult = mapDocs(input)
     const result = bookResultSchema.safeParse(mapDocResult[0])
-    expect(result.success).toBe(false)
+    expect(result.success).toBe(true)
   })
 })
 

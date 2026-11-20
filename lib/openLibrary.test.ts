@@ -100,7 +100,7 @@ describe('mapDocs', () => {
       {
         id: '/works/OL8996439W',
         title: 'Il nome della rosa',
-        author: '',
+        author: 'Autore sconosciuto',
         coverUrl: 'https://covers.openlibrary.org/b/id/8598263-M.jpg',
         year: 1980,
       },

@@ -48,7 +48,9 @@ export function mapDocs(docs: OLDoc[]): BookResult[] {
   return docs.map((d) => ({
     id: d.key,
     title: d.title,
-    author: d.author_name?.join(', ') ?? 'Autore sconosciuto',
+    author: d.author_name?.length
+      ? d.author_name.join(', ')
+      : 'Autore sconosciuto',
     coverUrl: d.cover_i
       ? `https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg`
       : null,
