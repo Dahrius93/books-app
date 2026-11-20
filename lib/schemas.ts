@@ -61,5 +61,5 @@ export const idSchema = z.object({
  */
 export const reviewSchema = z.object({
   id: z.number().int().min(0).positive(),
-  rating: z.number().int().min(0).max(5),
+  rating: z.number().int().min(1).max(5),
 })
