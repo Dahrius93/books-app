@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { bookResultSchema, reviewSchema } from '@/lib/schemas'
+import { mapDocs } from './openLibrary'
+import z from 'zod'
 
 // un libro valido di base, da modificare nei singoli test
 const validBook = {
@@ -8,6 +10,15 @@ const validBook = {
   author: 'Umberto Eco',
   coverUrl: 'https://covers.openlibrary.org/b/id/8598263-M.jpg',
   year: 1980,
+}
+
+// oggetto esempio restituito da openLibrary
+const fullDoc = {
+  key: '/works/OL8996439W',
+  title: 'Il nome della rosa',
+  author_name: ['Umberto Eco'],
+  cover_i: 8598263,
+  first_publish_year: 1980,
 }
 
 describe('bookResultSchema', () => {
@@ -62,6 +73,21 @@ describe('bookResultSchema', () => {
       ...validBook,
       year: 1980.5,
     })
+    expect(result.success).toBe(false)
+  })
+
+  it('libro trovato con la ricerca', () => {
+    const input = [fullDoc]
+    const mapDocResult = mapDocs(input)
+    const result = bookResultSchema.safeParse(mapDocResult[0])
+    expect(result.success).toBe(true)
+  })
+
+  it('libro trovato con la ricerca con array di autori vuoti', () => {
+    const dataInput = { ...fullDoc, author_name: [] }
+    const input = [dataInput]
+    const mapDocResult = mapDocs(input)
+    const result = bookResultSchema.safeParse(mapDocResult[0])
     expect(result.success).toBe(false)
   })
 })
