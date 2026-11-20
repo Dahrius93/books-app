@@ -28,8 +28,14 @@ export async function GET(req: Request) {
   const res = await fetch(url, {
     headers: { 'User-Agent': 'ReadingList/1.0 (tua-email@esempio.com)' },
   })
+  if (!res.ok) {
+    return NextResponse.json(
+      { error: 'Open Library non risponde' },
+      { status: 502 },
+    )
+  }
   // controllo dati in arrivo con shcema zod
-  const parsedData = olSearchSchema.safeParse(res)
+  const parsedData = olSearchSchema.safeParse(await res.json())
   if (!parsedData.success) {
     return NextResponse.json(
       { error: 'Risposta Open Library inattesa' },

@@ -225,7 +225,7 @@ export const createReviewAction = async ({
 // aggiorno un libro della libreria come già letto (zod)
 export const addToReadedBooksAction = async ({ id }: { id: number }) => {
   // controllo id con zod
-  const parsed = idSchema.safeParse(id)
+  const parsed = idSchema.safeParse({ id })
   // se non passa il controllo dello schema allora ritorno
   if (!parsed.success) return { message: 'identificativo libro non corretto' }
   // dati da utilizzare già parsati
@@ -261,7 +261,7 @@ export const addToReadedBooksAction = async ({ id }: { id: number }) => {
  */
 // cancello un libro dalla libreria (zod)
 export const deleteBookAction = async ({ id }: { id: number }) => {
-  const parsed = idSchema.safeParse(id)
+  const parsed = idSchema.safeParse({ id })
   if (!parsed.success) {
     return { message: 'Identificativo libro non corretto' }
   }
