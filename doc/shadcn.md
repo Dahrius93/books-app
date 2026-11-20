@@ -6,6 +6,9 @@ componenti UI riutilizzabili
 
   viene creata la cartella components e lib/utils.ts
 
+  oppure procedere dal sito shadcn, scegliere il preset che si vuole e poi ottenere il
+  comando da lanciare per installare il preset corretto
+
 ---
 
 differenza tra Radix e BaseUI

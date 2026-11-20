@@ -23,14 +23,18 @@
 }
  */
 
+// openLibrary type that are needed
 type OLDoc = {
-  key: string
-  title: string
   author_name?: string[]
   cover_i?: number
   first_publish_year?: number
+  key: string
+  title: string
 }
 
+// custom type used for OpenLibrary
+// it is needed because of author and coverUrl
+// needs to be composed
 export type BookResult = {
   id: string
   title: string
