@@ -2,10 +2,9 @@
 
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
-import { number, z } from 'zod'
 import db from './db'
-import { Book } from '@/app/generated/prisma/client'
 import type { BookResult } from '@/lib/openLibrary'
+import { bookResultSchema, idSchema, reviewSchema } from '@/lib/schemas'
 
 /**
  *
@@ -139,21 +138,34 @@ export const fetchNotReadedBooks = async () => {
  *
  *
  */
-
+// aggiunta di un libro in libreria (zod)
 export const addToLibrary = async ({ book }: { book: BookResult }) => {
+  // controllo paramertro input funzione con schema zod
+  const parsed = bookResultSchema.safeParse(book)
+  // se il controllo non passa fermo l'esecuzione
+  if (!parsed.success) return { message: 'Dati libro non validi' }
+
+  // oggetto book controllato e valido da utilizzare
+  const parsedBook = parsed.data
+
+  // aggiungo in database
   try {
     const userId = await getAuthUserId()
     await db.book.create({
       data: {
-        workId: book.id,
+        workId: parsedBook.id,
         userId: userId,
-        title: book.title,
-        author: book.author,
-        coverUrl: book.coverUrl,
-        year: book.year,
+        title: parsedBook.title,
+        author: parsedBook.author,
+        coverUrl: parsedBook.coverUrl,
+        year: parsedBook.year,
       },
     })
+
+    // aggiorno la cartella root
     revalidatePath('/')
+
+    // messaggio da visualizzare in un toast
     return { message: 'Aggiunto in libreria' }
   } catch (error) {
     return renderError(error)
@@ -170,8 +182,7 @@ export const addToLibrary = async ({ book }: { book: BookResult }) => {
  *
  *
  */
-
-// aggiunta di una review su un libro
+// aggiunta di una review su un libro (Zod)
 export const createReviewAction = async ({
   rating,
   id,
@@ -179,19 +190,23 @@ export const createReviewAction = async ({
   rating: number
   id: number
 }) => {
-  if (!Number.isInteger(rating) || rating < 0 || rating > 5) {
-    throw new Error('Il voto deve essere tra 0 e 5')
-  }
+  // controllo zod dei dati
+  const parsed = reviewSchema.safeParse({ rating, id })
+  // se dati non corretti con schema allora ritorno
+  if (!parsed.success) return { message: 'inserisci un voto da 1 a 5' }
+
+  // dati da utilizzare, già parsati
+  const parsedData = parsed.data
 
   try {
     const userId = await getAuthUserId()
     await db.book.update({
       where: {
         userId,
-        id,
+        id: parsedData.id,
       },
       data: {
-        rating,
+        rating: parsedData.rating,
       },
     })
     revalidatePath('/')
@@ -211,15 +226,21 @@ export const createReviewAction = async ({
  *
  *
  */
-
-// aggiorno un libro della libreria come già letto
+// aggiorno un libro della libreria come già letto (zod)
 export const addToReadedBooksAction = async ({ id }: { id: number }) => {
+  // controllo id con zod
+  const parsed = idSchema.safeParse({ id })
+  // se non passa il controllo dello schema allora ritorno
+  if (!parsed.success) return { message: 'identificativo libro non corretto' }
+  // dati da utilizzare già parsati
+  const parsedData = parsed.data
+
   try {
     const userId = await getAuthUserId()
     await db.book.update({
       where: {
         userId,
-        id,
+        id: parsedData.id,
       },
       data: {
         read: true,

@@ -23,7 +23,11 @@
 }
  */
 
-// openLibrary type that are needed
+/**
+ *
+ * OpenLibraryDoc as it is on net
+ *
+ */
 type OLDoc = {
   author_name?: string[]
   cover_i?: number
@@ -32,17 +36,47 @@ type OLDoc = {
   title: string
 }
 
-// custom type used for OpenLibrary
-// it is needed because of author and coverUrl
-// needs to be composed
-export type BookResult = {
+/**
+ * 
+ * BookResult Type 
+ * it's the result of the fetch
+ * 
+ * OLDoc --> map() --> BookResult
+ * 
+
+  export type BookResult = {
   id: string
   title: string
   author: string
   coverUrl: string | null
   year: number | null
-}
+  } 
 
+
+  *
+  * 
+  * 
+*/
+
+/**!SECTION
+ *
+ * Importo il tipo BookResult da schema Zod
+ *
+ */
+import { type BookResult } from './schemas'
+// per non perdere il tipo esportato da questo file
+// metto export dello stesso tipo importato
+export type { BookResult } from './schemas'
+
+/**
+ *
+ * funzione che mappa il risultato della fetch
+ * sul tupo BookResult[]
+ *
+ * in questo modo aggiungo "autore sconosciuto se manca"
+ * e compongo l'url dell immagine il quale non arriva per intero
+ *
+ */
 export function mapDocs(docs: OLDoc[]): BookResult[] {
   return docs.map((d) => ({
     id: d.key,
