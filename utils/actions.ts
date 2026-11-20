@@ -16,7 +16,6 @@ import { bookResultSchema, idSchema, reviewSchema } from '@/lib/schemas'
  *
  *
  */
-
 // check for actual user else error
 const getAuthUser = async () => {
   const user = await currentUser()
@@ -51,7 +50,6 @@ const renderError = (error: unknown): { message: string } => {
  *
  *
  */
-
 // fetch di tutta la libreria
 export const fetchMyLibrary = async () => {
   const userId = await getAuthUserId()
@@ -71,7 +69,6 @@ export const fetchMyLibrary = async () => {
  *
  *
  */
-
 // fetch di un singolo libro dalla libreria
 // utile per mostrarlo su una pagina dedicata
 export const fetchBook = async ({ id }: { id: number }) => {
@@ -94,7 +91,6 @@ export const fetchBook = async ({ id }: { id: number }) => {
  *
  *
  */
-
 // fetch dei libri già letti nella libreria
 export const fetchReadedBooks = async () => {
   const userId = await getAuthUserId()
@@ -229,7 +225,7 @@ export const createReviewAction = async ({
 // aggiorno un libro della libreria come già letto (zod)
 export const addToReadedBooksAction = async ({ id }: { id: number }) => {
   // controllo id con zod
-  const parsed = idSchema.safeParse({ id })
+  const parsed = idSchema.safeParse(id)
   // se non passa il controllo dello schema allora ritorno
   if (!parsed.success) return { message: 'identificativo libro non corretto' }
   // dati da utilizzare già parsati
@@ -263,12 +259,16 @@ export const addToReadedBooksAction = async ({ id }: { id: number }) => {
  *
  *
  */
-
-// cancello un libro dalla libreria
+// cancello un libro dalla libreria (zod)
 export const deleteBookAction = async ({ id }: { id: number }) => {
+  const parsed = idSchema.safeParse(id)
+  if (!parsed.success) {
+    return { message: 'Identificativo libro non corretto' }
+  }
+  const parsedData = parsed.data
   try {
     const userId = await getAuthUserId()
-    await db.book.delete({ where: { userId, id } })
+    await db.book.delete({ where: { userId, id: parsedData.id } })
     revalidatePath('/')
     return { message: 'Libro rimosso' }
   } catch (error) {

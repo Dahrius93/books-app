@@ -23,50 +23,17 @@
 }
  */
 
-/**
- *
- * OpenLibraryDoc as it is on net
- *
- */
-type OLDoc = {
-  author_name?: string[]
-  cover_i?: number
-  first_publish_year?: number
-  key: string
-  title: string
-}
-
-/**
- * 
- * BookResult Type 
- * it's the result of the fetch
- * 
- * OLDoc --> map() --> BookResult
- * 
-
-  export type BookResult = {
-  id: string
-  title: string
-  author: string
-  coverUrl: string | null
-  year: number | null
-  } 
-
-
-  *
-  * 
-  * 
-*/
-
 /**!SECTION
  *
  * Importo il tipo BookResult da schema Zod
+ * importo il tipo OLDoc da zod
+ *
+ * poi esporto di nuovo per non perdere
+ * il tipo creato originariamente senza zod
  *
  */
-import { type BookResult } from './schemas'
-// per non perdere il tipo esportato da questo file
-// metto export dello stesso tipo importato
-export type { BookResult } from './schemas'
+import type { OLDoc, BookResult } from './schemas'
+export type { OLDoc, BookResult } from './schemas'
 
 /**
  *

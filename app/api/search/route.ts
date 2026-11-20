@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { mapDocs } from '@/lib/openLibrary'
+import { olSearchSchema } from '@/lib/schemas'
 
 /**!SECTION
  *
@@ -27,16 +28,15 @@ export async function GET(req: Request) {
   const res = await fetch(url, {
     headers: { 'User-Agent': 'ReadingList/1.0 (tua-email@esempio.com)' },
   })
-  if (!res.ok) {
+  // controllo dati in arrivo con shcema zod
+  const parsedData = olSearchSchema.safeParse(res)
+  if (!parsedData.success) {
     return NextResponse.json(
-      { error: 'Open Library non risponde' },
+      { error: 'Risposta Open Library inattesa' },
       { status: 502 },
     )
   }
-
-  const data = await res.json()
-
   // ritorno il map del tipo OLDoc[] su BookResult[]
   // il tipo risultato è BookResult[]
-  return NextResponse.json(mapDocs(data.docs))
+  return NextResponse.json(mapDocs(parsedData.data.docs))
 }
