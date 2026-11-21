@@ -2,6 +2,11 @@
 import { ThemeProvider } from './theme-provider'
 import { Toaster } from '@/components/ui/toast'
 
+/**
+ *
+ * unisco ThemeProvider con Toaster di Shadcn in un unico provider
+ *
+ */
 function Providers({ children }: { children: React.ReactNode }) {
   return (
     <>

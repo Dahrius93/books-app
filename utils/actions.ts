@@ -162,7 +162,9 @@ export const addToLibrary = async ({ book }: { book: BookResult }) => {
     revalidatePath('/')
 
     // messaggio da visualizzare in un toast
-    return { message: 'Aggiunto in libreria' }
+    return {
+      message: `Il libro ${parsedBook.title} è stato aggiunto in libreria`,
+    }
   } catch (error) {
     return renderError(error)
   }
@@ -268,9 +270,10 @@ export const deleteBookAction = async ({ id }: { id: number }) => {
   const parsedData = parsed.data
   try {
     const userId = await getAuthUserId()
+    const book = await fetchBook({ id })
     await db.book.delete({ where: { userId, id: parsedData.id } })
     revalidatePath('/')
-    return { message: 'Libro rimosso' }
+    return { message: `Il libro ${book?.title} è stato rimosso` }
   } catch (error) {
     return renderError(error)
   }

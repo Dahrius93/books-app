@@ -3,6 +3,7 @@
 import { deleteBookAction } from '@/utils/actions'
 import { type Book } from '@/app/generated/prisma/client'
 import SingleBook from '../SingleBook'
+import { toast } from '../ui/toast'
 
 const Library = ({ books }: { books: Book[] }) => {
   return (
@@ -23,7 +24,10 @@ const Library = ({ books }: { books: Book[] }) => {
               {/* pulsante cancella dalla libreria */}
               <button
                 className="bg-primary text-white rounded-2xl py-1 px-2 hover:shadow-lg cursor-pointer"
-                onClick={() => deleteBookAction({ id: book.id })}
+                onClick={async () => {
+                  const res = await deleteBookAction({ id: book.id })
+                  toast.add({ title: res.message })
+                }}
               >
                 Elimina
               </button>

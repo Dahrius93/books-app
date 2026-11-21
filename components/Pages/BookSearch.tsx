@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import type { BookResult } from '@/lib/openLibrary'
 import { addToLibrary } from '@/utils/actions'
 import SingleBook from '../SingleBook'
+import { toast } from '../ui/toast'
 
 /**!SECTION
  *
@@ -103,7 +104,10 @@ export function BookSearch({ savedIds }: { savedIds: string[] }) {
               ) : (
                 <button
                   className="bg-primary text-white rounded-2xl py-1 px-2 hover:shadow-lg cursor-pointer"
-                  onClick={() => addToLibrary({ book })}
+                  onClick={async () => {
+                    const resp = await addToLibrary({ book })
+                    toast.add({ title: resp.message })
+                  }}
                 >
                   Aggiungi
                 </button>
