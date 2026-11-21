@@ -32,11 +32,14 @@ const getAuthUserId = async () => {
   return userId
 }
 
+type ToastType = 'success' | 'error'
+
 // generic error to display in a toast
-const renderError = (error: unknown): { message: string } => {
+const renderError = (error: unknown): { type: ToastType; message: string } => {
   console.log(error)
   return {
     message: error instanceof Error ? error.message : 'ops.. errore',
+    type: 'error',
   }
 }
 
@@ -135,11 +138,16 @@ export const fetchNotReadedBooks = async () => {
  *
  */
 // aggiunta di un libro in libreria (zod)
-export const addToLibrary = async ({ book }: { book: BookResult }) => {
+export const addToLibrary = async ({
+  book,
+}: {
+  book: BookResult
+}): Promise<{ type: ToastType; message: string }> => {
   // controllo paramertro input funzione con schema zod
   const parsed = bookResultSchema.safeParse(book)
   // se il controllo non passa fermo l'esecuzione
-  if (!parsed.success) return { message: 'Dati libro non validi' }
+  if (!parsed.success)
+    return { message: 'Dati libro non validi', type: 'error' }
 
   // oggetto book controllato e valido da utilizzare
   const parsedBook = parsed.data
@@ -164,6 +172,7 @@ export const addToLibrary = async ({ book }: { book: BookResult }) => {
     // messaggio da visualizzare in un toast
     return {
       message: `Il libro ${parsedBook.title} è stato aggiunto in libreria`,
+      type: 'success',
     }
   } catch (error) {
     return renderError(error)
@@ -187,11 +196,12 @@ export const createReviewAction = async ({
 }: {
   rating: number
   id: number
-}) => {
+}): Promise<{ type: ToastType; message: string }> => {
   // controllo zod dei dati
   const parsed = reviewSchema.safeParse({ rating, id })
   // se dati non corretti con schema allora ritorno
-  if (!parsed.success) return { message: 'inserisci un voto da 1 a 5' }
+  if (!parsed.success)
+    return { message: 'inserisci un voto da 1 a 5', type: 'error' }
 
   // dati da utilizzare, già parsati
   const parsedData = parsed.data
@@ -208,7 +218,7 @@ export const createReviewAction = async ({
       },
     })
     revalidatePath('/')
-    return { message: 'Recensione salvata' }
+    return { message: 'Recensione salvata', type: 'success' }
   } catch (error) {
     return renderError(error)
   }
@@ -225,11 +235,16 @@ export const createReviewAction = async ({
  *
  */
 // aggiorno un libro della libreria come già letto (zod)
-export const addToReadedBooksAction = async ({ id }: { id: number }) => {
+export const addToReadedBooksAction = async ({
+  id,
+}: {
+  id: number
+}): Promise<{ type: ToastType; message: string }> => {
   // controllo id con zod
   const parsed = idSchema.safeParse({ id })
   // se non passa il controllo dello schema allora ritorno
-  if (!parsed.success) return { message: 'identificativo libro non corretto' }
+  if (!parsed.success)
+    return { message: 'identificativo libro non corretto', type: 'error' }
   // dati da utilizzare già parsati
   const parsedData = parsed.data
 
@@ -245,7 +260,7 @@ export const addToReadedBooksAction = async ({ id }: { id: number }) => {
       },
     })
     revalidatePath('/')
-    return { message: 'Libro letto' }
+    return { message: 'Libro letto', type: 'success' }
   } catch (error) {
     return renderError(error)
   }
@@ -262,10 +277,14 @@ export const addToReadedBooksAction = async ({ id }: { id: number }) => {
  *
  */
 // cancello un libro dalla libreria (zod)
-export const deleteBookAction = async ({ id }: { id: number }) => {
+export const deleteBookAction = async ({
+  id,
+}: {
+  id: number
+}): Promise<{ type: ToastType; message: string }> => {
   const parsed = idSchema.safeParse({ id })
   if (!parsed.success) {
-    return { message: 'Identificativo libro non corretto' }
+    return { message: 'Identificativo libro non corretto', type: 'error' }
   }
   const parsedData = parsed.data
   try {
@@ -273,7 +292,10 @@ export const deleteBookAction = async ({ id }: { id: number }) => {
     const book = await fetchBook({ id })
     await db.book.delete({ where: { userId, id: parsedData.id } })
     revalidatePath('/')
-    return { message: `Il libro ${book?.title} è stato rimosso` }
+    return {
+      message: `Il libro ${book?.title} è stato rimosso`,
+      type: 'success',
+    }
   } catch (error) {
     return renderError(error)
   }

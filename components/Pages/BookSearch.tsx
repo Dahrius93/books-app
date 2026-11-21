@@ -106,7 +106,7 @@ export function BookSearch({ savedIds }: { savedIds: string[] }) {
                   className="bg-primary text-white rounded-2xl py-1 px-2 hover:shadow-lg cursor-pointer"
                   onClick={async () => {
                     const resp = await addToLibrary({ book })
-                    toast.add({ title: resp.message })
+                    toast.add({ title: resp.message, type: resp.type })
                   }}
                 >
                   Aggiungi

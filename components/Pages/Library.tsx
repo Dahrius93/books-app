@@ -26,7 +26,7 @@ const Library = ({ books }: { books: Book[] }) => {
                 className="bg-primary text-white rounded-2xl py-1 px-2 hover:shadow-lg cursor-pointer"
                 onClick={async () => {
                   const res = await deleteBookAction({ id: book.id })
-                  toast.add({ title: res.message })
+                  toast.add({ title: res.message, type: res.type })
                 }}
               >
                 Elimina
