@@ -16,7 +16,7 @@ function Providers({ children }: { children: React.ReactNode }) {
         attribute="class"
         defaultTheme="system"
         enableSystem
-        disableTransitionOnChange
+        // disableTransitionOnChange  // disabilita la transizione tailwind
       >
         {children}
       </ThemeProvider>

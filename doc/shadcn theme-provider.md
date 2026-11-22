@@ -46,7 +46,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             attribute="class"
             defaultTheme="system"
             enableSystem
-            disableTransitionOnChange
+            // disableTransitionOnChange --> abilitare per nascondere le transizioni
           >
             {children}
           </ThemeProvider>
@@ -61,7 +61,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
 Place a mode toggle on your site to toggle between light and dark mode.
 
-```tsx
+esempio 1:
+
+```tsx con menu
 'use client'
 
 import * as React from 'react'
@@ -104,4 +106,98 @@ export function ModeToggle() {
 }
 ```
 
-</Steps>
+esempio 2:
+
+```tsx semplice senza transizione
+'use client'
+
+import { links } from '@/utils/links'
+import Link from 'next/link'
+import { FaMoon } from 'react-icons/fa'
+import { IoSunny } from 'react-icons/io5'
+import { useTheme } from 'next-themes'
+
+const Navbar = () => {
+  const { resolvedTheme, setTheme } = useTheme()
+
+  const toggleTheme = () => {
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
+  }
+
+  return (
+    <div>
+      <header className="flex justify-end items-center p-4 gap-4 h-16 border-b-2">
+        {links.map((link) => {
+          return (
+            <Link href={link.href} key={link.href}>
+              {link.label}
+            </Link>
+          )
+        })}
+        <button className="cursor-pointer" onClick={toggleTheme}>
+          <FaMoon className="dark:hidden" />
+          <IoSunny className="hidden dark:block" />
+        </button>
+      </header>
+    </div>
+  )
+}
+
+export default Navbar
+```
+
+esempio 3 con transizione tailwind:
+
+```tsx
+'use client'
+
+import { links } from '@/utils/links'
+import Link from 'next/link'
+import { FaMoon } from 'react-icons/fa'
+import { IoSunny } from 'react-icons/io5'
+import { useTheme } from 'next-themes'
+
+const Navbar = () => {
+  const { resolvedTheme, setTheme } = useTheme()
+
+  const toggleTheme = () => {
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
+  }
+
+  return (
+    <div>
+      <header className="flex justify-end items-center p-4 gap-4 h-16 border-b-2">
+        {links.map((link) => {
+          return (
+            <Link href={link.href} key={link.href}>
+              {link.label}
+            </Link>
+          )
+        })}
+        <button
+          className="relative grid place-items-center size-5 cursor-pointer"
+          type="button"
+          onClick={toggleTheme}
+          aria-label="Cambia tema"
+        >
+          {/* 
+          - "col-start-1 row-start-1" = senza classe row e queste altre due classi le icone sarebbero su due righe diverse
+          - "transition-all duration-500" = abilita la transizione
+          - luna -> "rotate-0 scale-100 dark:-rotate-90 dark:scale-0"
+                    ruota da 0° in light a 90° in dark
+                    dark:scale-0 la rimpicciolisce da 100% a 0%
+
+          - Sole -> "rotate-90 scale-0 dark:rotate-0 dark:scale-100"
+                    ruota da 90° in light a 0° in dark
+                    dark:scale-100 La ingrandisce da 0% a 100%         
+          */}
+          <FaMoon className="col-start-1 row-start-1 transition-all duration-500 rotate-0 scale-100 dark:-rotate-90 dark:scale-0" />
+          <IoSunny className="col-start-1 row-start-1 transition-all duration-500 rotate-90 scale-0 dark:rotate-0 dark:scale-100" />
+        </button>
+      </header>
+    </div>
+  )
+}
+
+export default Navbar
+```
